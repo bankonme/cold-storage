@@ -18,7 +18,7 @@ SHELL_STRING = '''bitcoin-tool \
 
 def get_address_from_wif(wif):
     return check_output(SHELL_STRING % wif, shell=True).strip()
-åç
+
 print 'Checking all wallets in %s...' % FILE_NAME
 
 with open(FILE_NAME, 'r') as f:
