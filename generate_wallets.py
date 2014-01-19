@@ -43,7 +43,7 @@ if __name__ == '__main__':
     all_wifs = set()
     all_public_addresses = set()
 
-     #for feeding entropy to /dev/random
+    # for feeding entropy to /dev/random
     MSG = 'Please type at least 100 random characters, of which 25 of them must be unique. Feel free to type more: '
     entropy = getpass.getpass(MSG)
     assert check_entropy(entropy, 100, 25), 'Not enough entropy, please try again!'
