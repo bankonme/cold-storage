@@ -5,6 +5,7 @@
 
 import csv
 from datetime import datetime
+import getpass
 
 # Download pycoin (https://github.com/richardkiss/pycoin)
 # and put this file in the root directory so that these imports work
@@ -13,6 +14,20 @@ from pycoin.encoding import is_valid_wif
 
 # Set the number of keys you want to generate here:
 NUM_KEYS_TO_GENERATE = 100000
+
+def check_entropy(entropy, num_chars, num_unique_chars):
+    """
+    Check to be sure entropy:
+     - Is longer than num_chars, AND
+     - Has more unique characters than num_unique_chars
+
+    Returns True iff both conditions are met
+    """
+    if len(entropy) <= num_chars:
+        return False
+    if len(set(entropy)) <= num_unique_chars:
+        return False
+    return True
 
 def devrandom_entropy():
     return open("/dev/random", "rb").read(64)
@@ -25,9 +40,13 @@ if __name__ == '__main__':
     START_TIME = datetime.now()
     FILE_NAME = '/media/wipeout/btc_keys_%s.csv' % START_TIME.strftime("%Y%m%d_%H%M")
     HEADERS = ['born_at', 'wif', 'public_bitcoin_address']
-
     all_wifs = set()
     all_public_addresses = set()
+
+     #for feeding entropy to /dev/random
+    MSG = 'Please type at least 100 random characters, of which 25 of them must be unique. Feel free to type more: '
+    entropy = getpass.getpass(MSG)
+    assert check_entropy(entropy, 100, 25), 'Not enough entropy, please try again!'
 
     print 'Starting wallet generation at %s...' % START_TIME
     print 'Saving results to %s...' % FILE_NAME
@@ -55,7 +74,7 @@ if __name__ == '__main__':
                 }
             myWriter.writerow(wallet_dict)
 
-            # weak safety chcecks
+            # weak safety checks
             assert is_valid_wif(wif)
             assert wif not in all_wifs
             assert public_address not in all_public_addresses
